@@ -72,24 +72,22 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, STRIP_PIN, NEO_GRB + NE
 #define MANGANITE strip.Color(227, 57, 83)
 
 void setup() {
-  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-  #if defined (__AVR_ATtiny85__)
-    if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-  #endif
-  // End of trinket special code
-  Serial.begin(9600);
-
-  // Set up the motion sensor pin as input
-  pinMode(MOTION_SENSOR_PIN, INPUT);
-
-  // put your setup code here, to run once:
-  strip.begin();
-  strip.setBrightness(BRIGHTNESS);
-  strip.show(); // Initialize all pixels to 'off'
-}
+    // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
+    #if defined (__AVR_ATtiny85__)
+        if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+        #endif
+    // End of trinket special code
+    Serial.begin(9600);
+    // Set up the motion sensor pin as input
+    pinMode(MOTION_SENSOR_PIN, INPUT);
+    // put your setup code here, to run once:
+    strip.begin();
+    strip.setBrightness(BRIGHTNESS);
+    strip.show(); // Initialize all pixels to 'off'
+    }
 
 void loop() {
-  CheckForMotion(CYAN);
+    CheckForMotion(CYAN);
   // SetCascadingColorUpwards(CYAN, PIXEL_COUNT, 1);
   // SetStripOffBottomToTop(2);
   // SetCascadingColorDownwards(YELLOW, PIXEL_COUNT, 1);
@@ -98,110 +96,112 @@ void loop() {
 
 void CheckForMotion(uint32_t color)
 {
-  // Read the value from the motion sensor
-  int motionDetected = digitalRead(MOTION_SENSOR_PIN);
-  
-  if (motionDetected == HIGH) {
-    // SetCascadingColorUpwards(color, PIXEL_COUNT, 20);
-    // SetCascadingColorUpwards(YELLOW, strip.numPixels(), 30);
-    rainbowCycle(30);
-
-
-    // Print a message to the serial monitor
-    Serial.println("Motion detected!");
+    // Read the value from the motion sensor
+    int motionDetected = digitalRead(MOTION_SENSOR_PIN);
     
-    // Wait for a short time to debounce the sensor
-    delay(500);  // Adjust as needed
-    SetStripOffBottomToTop(2);
-  }
-  delay(100);  // Adjust delay if needed for your application
+    if (motionDetected == HIGH) {
+        // Activate the LED strip with the specified color
+        SetCascadingColorUpwards(color, PIXEL_COUNT, 20);
+        
+        // Print a message to the serial monitor
+        Serial.println("Motion detected!");
+        
+        // Wait for a short time to debounce the sensor
+        delay(500);  // Adjust as needed
+        
+        // Turn off the LED strip
+        SetStripOffBottomToTop(2);
+    }
+    delay(100);  // Adjust delay if needed for your application
 }
 
 // Fill the dots one after the other with a color starting from the bottom
 void SetCascadingColorUpwards(uint32_t color, uint16_t pixelsToCountTo, uint8_t speedMs) {
-  for(uint16_t i=0; i<pixelsToCountTo; i++) {
-    strip.setPixelColor(i, color);
-    if(i > 60) strip.setPixelColor((i-60), strip.Color(0,0,0));
-    strip.show();
-    delay(speedMs);
-  }
+    for(uint16_t i=0; i<pixelsToCountTo; i++) {
+        strip.setPixelColor(i, color);
+        if(i > 60) strip.setPixelColor((i-60), strip.Color(0,0,0));
+        strip.show();
+        delay(speedMs);
+        }
 }
 
 // Fill the dots one after the other with a color starting from the Top
 void SetCascadingColorDownwards(uint32_t color, uint16_t pixelsToCountTo, uint8_t speedMs) {
-  for(uint16_t i=strip.numPixels(); i>=strip.numPixels() - pixelsToCountTo; i--)
-  {
-    strip.setPixelColor(i, color);
-    strip.show();
-    delay(speedMs);
-    if(i == 0) break;
-  }
+    for(uint16_t i=strip.numPixels(); i>=strip.numPixels() - pixelsToCountTo; i--)
+    {
+        strip.setPixelColor(i, color);
+        strip.show();
+        delay(speedMs);
+        if(i == 0) break;
+        }
 }
 
+// Turn off the entire strip
 void SetStripOffBottomToTop(uint8_t speedMs)
 {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0,0,0));
-    strip.show();
-    delay(speedMs);
-  }
+    for(uint16_t i=0; i<strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(0,0,0));
+        strip.show();
+        delay(speedMs);
+        }
 }
 
+// Turn off the entire strip
 void SetStripOffTopToBottom(uint8_t speedMs)
 {
-  for(uint16_t i=strip.numPixels(); i>=0; i--)
-  {
-    strip.setPixelColor(i, strip.Color(0,0,0));
-    strip.show();
-    delay(speedMs);
-    if(i == 0) break;
-  }
+    for(uint16_t i=strip.numPixels(); i>=0; i--)
+    {
+        strip.setPixelColor(i, strip.Color(0,0,0));
+        strip.show();
+        delay(speedMs);
+        if(i == 0) break;
+        }
 }
 
 //ADAFRUIT CRAZY LIGHTS
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
-  uint16_t i, j;
-  int num_cycles = 3;
-  for(j=0; j<256*num_cycles; j++) { // 5 cycles of all colors on wheel
-    for(i=0; i< strip.numPixels(); i++) {
-      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-      if(j == 0) strip.show();
-    }
-    strip.show();
-    delay(wait);
-  }
+    uint16_t i, j;
+    int num_cycles = 3;
+    for(j=0; j<256*num_cycles; j++) { // 5 cycles of all colors on wheel
+        for(i=0; i< strip.numPixels(); i++) {
+            strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+            if(j == 0) strip.show();
+            }
+            strip.show();
+            delay(wait);
+            }
 }
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
     for (int q=0; q < 3; q++) {
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
-      }
-      strip.show();
-
-      delay(wait);
-
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, 0);        //turn every third pixel off
-      }
+        for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+            strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
+            }
+            strip.show();
+            
+            delay(wait);
+            
+            for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+                strip.setPixelColor(i+q, 0);        //turn every third pixel off
+                }
     }
-  }
+    }
 }
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) {
+    WheelPos = 255 - WheelPos;
+    if(WheelPos < 85) {
     return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  }
-  if(WheelPos < 170) {
+    }
+    if(WheelPos < 170) {
     WheelPos -= 85;
     return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-  WheelPos -= 170;
-  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-}
+    }
+    WheelPos -= 170;
+    return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+    }
