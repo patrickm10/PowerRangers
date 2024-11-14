@@ -1,2 +1,2 @@
 # PowerRangers
-4 guys coding in Boston
+Power Rangers Unite to start building software
