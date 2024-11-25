@@ -178,13 +178,26 @@ void christmasLights(uint8_t wait) {
     for(int i=0; i<strip.numPixels(); i++) {
         if(i % 2 == 0) {
             strip.setPixelColor(i, RED);
-            }
-            else {
-                strip.setPixelColor(i, GREEN);
-                }
-                strip.show();
-                delay(wait);
-                }
+        } else {
+            strip.setPixelColor(i, GREEN);
+        }
+        strip.show();
+        delay(wait);
+    }
+
+    // Flash red and green three times
+    for(int j=0; j<3; j++) {
+        strip.fill(RED);
+        strip.show();
+        delay(500);
+        strip.fill(GREEN);
+        strip.show();
+        delay(500);
+    }
+
+    // Turn off the strip
+    strip.fill(strip.Color(0, 0, 0));
+    strip.show();
 }
 
 //Theatre-style crawling lights with rainbow effect
