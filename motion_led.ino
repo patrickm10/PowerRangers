@@ -9,7 +9,7 @@
 // After testing, for a standard computer usb port using all 300 pixels, a maximum brightness of
 // 15 is allowed before computer current regulations shut off the usb connection
 #define PIXEL_COUNT 300
-#define BRIGHTNESS 15
+#define BRIGHTNESS 13
 
 
 // NOTE: this has not been tested with battery packs, the maximum brightness of a the neopixel strip is 255
@@ -87,7 +87,8 @@ void setup() {
     }
 
 void loop() {
-    CheckForMotion(CYAN);
+    // CheckForMotion(WHITE);
+    christmasLights(50);
   // SetCascadingColorUpwards(CYAN, PIXEL_COUNT, 1);
   // SetStripOffBottomToTop(2);
   // SetCascadingColorDownwards(YELLOW, PIXEL_COUNT, 1);
@@ -171,6 +172,19 @@ void rainbowCycle(uint8_t wait) {
             strip.show();
             delay(wait);
             }
+}
+
+void christmasLights(uint8_t wait) {
+    for(int i=0; i<strip.numPixels(); i++) {
+        if(i % 2 == 0) {
+            strip.setPixelColor(i, RED);
+            }
+            else {
+                strip.setPixelColor(i, GREEN);
+                }
+                strip.show();
+                delay(wait);
+                }
 }
 
 //Theatre-style crawling lights with rainbow effect
