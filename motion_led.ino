@@ -87,33 +87,23 @@ void setup() {
     }
 
 void loop() {
-    // CheckForMotion(WHITE);
-    christmasLights(50);
-  // SetCascadingColorUpwards(CYAN, PIXEL_COUNT, 1);
-  // SetStripOffBottomToTop(2);
-  // SetCascadingColorDownwards(YELLOW, PIXEL_COUNT, 1);
-  // SetStripOffTopToBottom(2);
+    CheckForMotion();
 }
 
-void CheckForMotion(uint32_t color)
-{
+void CheckForMotion() {
     // Read the value from the motion sensor
     int motionDetected = digitalRead(MOTION_SENSOR_PIN);
     
     if (motionDetected == HIGH) {
-        // Activate the LED strip with the specified color
-        SetCascadingColorUpwards(color, PIXEL_COUNT, 20);
-        
         // Print a message to the serial monitor
         Serial.println("Motion detected!");
-        
-        // Wait for a short time to debounce the sensor
-        delay(500);  // Adjust as needed
-        
-        // Turn off the LED strip
-        SetStripOffBottomToTop(2);
+
+        // Execute the Christmas lights sequence once
+        christmasLights();
+
+        // Wait to avoid immediate retriggering
+        delay(10000);  // Adjust delay as needed (e.g., 10 seconds)
     }
-    delay(100);  // Adjust delay if needed for your application
 }
 
 // Fill the dots one after the other with a color starting from the bottom
@@ -185,19 +175,22 @@ void christmasLights(uint8_t wait) {
         delay(wait);
     }
 
-    // Flash red and green three times
-    for(int j=0; j<3; j++) {
-        strip.fill(RED);
-        strip.show();
-        delay(500);
-        strip.fill(GREEN);
-        strip.show();
-        delay(500);
-    }
+    // // Flash red and green three times
+    // for(int j=0; j<3; j++) {
+    //     strip.fill(RED);
+    //     strip.show();
+    //     delay(500);
+    //     strip.fill(GREEN);
+    //     strip.show();
+    //     delay(500);
+    // }
 
-    // Turn off the strip
-    strip.fill(strip.Color(0, 0, 0));
-    strip.show();
+    // Turn off the strip in a crawling theme
+    for(int i=0; i<strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+        strip.show();
+        delay(wait);
+    }
 }
 
 //Theatre-style crawling lights with rainbow effect
