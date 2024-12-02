@@ -165,32 +165,37 @@ void rainbowCycle(uint8_t wait) {
 }
 
 void christmasLights(uint8_t wait) {
-    // Turn on the first few lights alternating between red and green
-    for(int i=0; i<10; i++) {
+    // Step 1: Turn on the first ten lights, alternating red and green
+    for (int i = 0; i < 10; i++) {
         if (i % 2 == 0) {
-            strip.setPixelColor(i, RED);
+            strip.setPixelColor(i, RED); // Set even lights to red
         } else {
-            strip.setPixelColor(i, GREEN);
+            strip.setPixelColor(i, GREEN); // Set odd lights to green
         }
     }
     strip.show();
-    delay(2000); // Wait for 2 seconds
+    delay(2000); // Hold the lights on for 2 seconds
 
-    // Chase up the stairs
-    for(int i=0; i<strip.numPixels(); i++) {
-        strip.setPixelColor(i, RED);
-        if(i > 0) strip.setPixelColor(i-1, strip.Color(0, 0, 0));
+    // Step 2: Create a chasing effect
+    for (int i = 10; i < strip.numPixels(); i++) {
+        // Turn on the current light
+        strip.setPixelColor(i, RED); 
+        
+        // Turn off the oldest light in the sequence
+        strip.setPixelColor(i - 10, strip.Color(0, 0, 0));
+        
         strip.show();
-        delay(wait);
+        delay(wait); // Adjust speed of the chase effect
     }
 
-    // Turn off the strip in a crawling theme
-    for(int i=0; i<strip.numPixels(); i++) {
+    // Step 3: Turn off all lights
+    for (int i = 0; i < strip.numPixels(); i++) {
         strip.setPixelColor(i, strip.Color(0, 0, 0));
         strip.show();
         delay(wait);
     }
-}
+}W
+
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
