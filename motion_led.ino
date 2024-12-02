@@ -165,25 +165,24 @@ void rainbowCycle(uint8_t wait) {
 }
 
 void christmasLights(uint8_t wait) {
-    for(int i=0; i<strip.numPixels(); i++) {
-        if(i % 2 == 0) {
+    // Turn on the first few lights alternating between red and green
+    for(int i=0; i<10; i++) {
+        if (i % 2 == 0) {
             strip.setPixelColor(i, RED);
         } else {
             strip.setPixelColor(i, GREEN);
         }
+    }
+    strip.show();
+    delay(2000); // Wait for 2 seconds
+
+    // Chase up the stairs
+    for(int i=0; i<strip.numPixels(); i++) {
+        strip.setPixelColor(i, RED);
+        if(i > 0) strip.setPixelColor(i-1, strip.Color(0, 0, 0));
         strip.show();
         delay(wait);
     }
-
-    // // Flash red and green three times
-    // for(int j=0; j<3; j++) {
-    //     strip.fill(RED);
-    //     strip.show();
-    //     delay(500);
-    //     strip.fill(GREEN);
-    //     strip.show();
-    //     delay(500);
-    // }
 
     // Turn off the strip in a crawling theme
     for(int i=0; i<strip.numPixels(); i++) {
@@ -192,7 +191,6 @@ void christmasLights(uint8_t wait) {
         delay(wait);
     }
 }
-
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
