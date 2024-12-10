@@ -98,8 +98,8 @@ void CheckForMotion() {
         // Print a message to the serial monitor
         Serial.println("Motion detected!");
 
-        // Execute the Christmas lights sequence once
-        christmasLights();
+        // Execute the Christmas lights sequence once after 200ms
+        christmasLights(200);
 
         // Wait to avoid immediate retriggering
         delay(10000);  // Adjust delay as needed (e.g., 10 seconds)
@@ -165,36 +165,45 @@ void rainbowCycle(uint8_t wait) {
 }
 
 void christmasLights(uint8_t wait) {
-    // Step 1: Turn on the first ten lights, alternating red and green
-    for (int i = 0; i < 10; i++) {
-        if (i % 2 == 0) {
-            strip.setPixelColor(i, RED); // Set even lights to red
-        } else {
-            strip.setPixelColor(i, GREEN); // Set odd lights to green
+    // Read temperature from the thermal sensor
+    float objectTemp = mlx.readObjectTempC();
+
+    Serial.print("Object Temperature: ");
+    Serial.println(objectTemp);
+
+    // Check if the temperature exceeds the threshold
+    if (objectTemp > THRESHOLD_TEMP) {
+        // Step 1: Turn on the first ten lights, alternating red and green
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                strip.setPixelColor(i, strip.Color(255, 0, 0)); // Red
+            } else {
+                strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green
+            }
         }
-    }
-    strip.show();
-    delay(2000); // Hold the lights on for 2 seconds
-
-    // Step 2: Create a chasing effect
-    for (int i = 10; i < strip.numPixels(); i++) {
-        // Turn on the current light
-        strip.setPixelColor(i, RED); 
-        
-        // Turn off the oldest light in the sequence
-        strip.setPixelColor(i - 10, strip.Color(0, 0, 0));
-        
         strip.show();
-        delay(wait); // Adjust speed of the chase effect
-    }
+        delay(2000); // Hold the lights on for 2 seconds
 
-    // Step 3: Turn off all lights
-    for (int i = 0; i < strip.numPixels(); i++) {
-        strip.setPixelColor(i, strip.Color(0, 0, 0));
-        strip.show();
-        delay(wait);
+        // Step 2: Create a chasing effect
+        for (int i = 10; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, strip.Color(255, 0, 0));        // Turn on the current light (red)
+            strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
+            strip.show();
+            delay(wait); // Adjust speed of the chase effect
+        }
+
+        // Step 3: Turn off all lights
+        for (int i = 0; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
+            strip.show();
+            delay(wait);
+        }
+    } else {
+        Serial.println("Temperature below threshold. Lights off.");
+        strip.clear();
+        strip.show(); // Ensure all lights are off
     }
-}W
+}
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
