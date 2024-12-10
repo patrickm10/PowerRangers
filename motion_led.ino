@@ -149,7 +149,6 @@ void SetStripOffTopToBottom(uint8_t speedMs)
         }
 }
 
-//ADAFRUIT CRAZY LIGHTS
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
     uint16_t i, j;
@@ -164,15 +163,13 @@ void rainbowCycle(uint8_t wait) {
             }
 }
 
+// Christmas themed lights
+// Fill the dots one after the other with a color starting from the bottom
 void christmasLights(uint8_t wait) {
-    // Read temperature from the thermal sensor
-    float objectTemp = mlx.readObjectTempC();
+    // Check if motion is detected
+    if (digitalRead(PIR_PIN) == HIGH) {
+        Serial.println("Motion detected!");
 
-    Serial.print("Object Temperature: ");
-    Serial.println(objectTemp);
-
-    // Check if the temperature exceeds the threshold
-    if (objectTemp > THRESHOLD_TEMP) {
         // Step 1: Turn on the first ten lights, alternating red and green
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
@@ -199,7 +196,7 @@ void christmasLights(uint8_t wait) {
             delay(wait);
         }
     } else {
-        Serial.println("Temperature below threshold. Lights off.");
+        Serial.println("No motion detected. Lights off.");
         strip.clear();
         strip.show(); // Ensure all lights are off
     }
