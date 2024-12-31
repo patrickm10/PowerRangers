@@ -99,12 +99,53 @@ void CheckForMotion() {
         Serial.println("Motion detected!");
 
         // Execute the Christmas lights sequence once after 200ms
-        christmasLights(200);
+        // christmasLights(200);
+
+        // Execute the New Years lights sequence once after 200ms
+        newYearsLights(400);
+        
 
         // Wait to avoid immediate retriggering
         delay(10000);  // Adjust delay as needed (e.g., 10 seconds)
     }
 }
+
+
+// New Years themed lights
+// Fill the dots one after the other with a color starting from the bottom
+void newYearsLights(uint8_t wait) {
+    // Check if motion is detected
+    if (digitalRead(MOTION_SENSOR_PIN) == HIGH) {
+        Serial.println("Motion detected!");
+
+        // Step 1: Turn on the first ten lights with light blue color
+        for (int i = 0; i < 10; i++) {
+            strip.setPixelColor(i, LIGHT_BLUE); // Light Blue
+        }
+        strip.show();
+        delay(3000); // Hold the lights on for 3 seconds
+
+        // Step 2: Create a chasing effect
+        for (int i = 10; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, LIGHT_BLUE);        // Turn on the current light (light blue)
+            strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
+            strip.show();
+            delay(wait); // Adjust speed of the chase effect
+        }
+
+        // Step 3: Turn off all lights
+        for (int i = 0; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
+            strip.show();
+            delay(wait);
+        }
+    } else {
+        Serial.println("No motion detected. Lights off.");
+        strip.clear();
+        strip.show(); // Ensure all lights are off
+    }
+}
+
 
 // Fill the dots one after the other with a color starting from the bottom
 void SetCascadingColorUpwards(uint32_t color, uint16_t pixelsToCountTo, uint8_t speedMs) {
@@ -128,8 +169,7 @@ void SetCascadingColorDownwards(uint32_t color, uint16_t pixelsToCountTo, uint8_
 }
 
 // Turn off the entire strip
-void SetStripOffBottomToTop(uint8_t speedMs)
-{
+void SetStripOffBottomToTop(uint8_t speedMs){
     for(uint16_t i=0; i<strip.numPixels(); i++) {
         strip.setPixelColor(i, strip.Color(0,0,0));
         strip.show();
@@ -138,8 +178,7 @@ void SetStripOffBottomToTop(uint8_t speedMs)
 }
 
 // Turn off the entire strip
-void SetStripOffTopToBottom(uint8_t speedMs)
-{
+void SetStripOffTopToBottom(uint8_t speedMs){
     for(uint16_t i=strip.numPixels(); i>=0; i--)
     {
         strip.setPixelColor(i, strip.Color(0,0,0));
