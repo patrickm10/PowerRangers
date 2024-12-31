@@ -110,7 +110,30 @@ void CheckForMotion() {
     }
 }
 
+void inchwormEffect(uint8_t wait){
+    if(digitalRead(MOTION_SENSOR_PIN)== HIGH){
+        Serial.println("Motion detected!");
+        for (int iteration = 0; iteration < 20; iteration++) {
+            // Turn on all lights
+            for (int i = 0; i < strip.numPixels(); i++) {
+                strip.setPixelColor(i, LIGHT_BLUE); // Set all lights to white
+            }
+            strip.show();
+            delay(wait);
 
+            // Turn off 3 lights at a time, moving up the strip
+            for (int i = 0; i < strip.numPixels(); i += 3) {
+                for (int j = 0; j < 3; j++) {
+                    if (i + j < strip.numPixels()) {
+                        strip.setPixelColor(i + j, strip.Color(0, 0, 0)); // Turn off light
+                    }
+                }
+                strip.show();
+                delay(40);
+            }
+        }
+    }
+}
 // New Years themed lights
 // Fill the dots one after the other with a color starting from the bottom
 void newYearsLights(uint8_t wait) {
@@ -220,42 +243,42 @@ void rainbowCycle(uint8_t wait) {
 
 // Christmas themed lights
 // Fill the dots one after the other with a color starting from the bottom
-void christmasLights(uint8_t wait) {
-    // Check if motion is detected
-    if (digitalRead(PIR_PIN) == HIGH) {
-        Serial.println("Motion detected!");
+// void christmasLights(uint8_t wait) {
+//     // Check if motion is detected
+//     if (digitalRead(PIR_PIN) == HIGH) {
+//         Serial.println("Motion detected!");
 
-        // Step 1: Turn on the first ten lights, alternating red and green
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                strip.setPixelColor(i, strip.Color(255, 0, 0)); // Red
-            } else {
-                strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green
-            }
-        }
-        strip.show();
-        delay(2000); // Hold the lights on for 2 seconds
+//         // Step 1: Turn on the first ten lights, alternating red and green
+//         for (int i = 0; i < 10; i++) {
+//             if (i % 2 == 0) {
+//                 strip.setPixelColor(i, strip.Color(255, 0, 0)); // Red
+//             } else {
+//                 strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green
+//             }
+//         }
+//         strip.show();
+//         delay(2000); // Hold the lights on for 2 seconds
 
-        // Step 2: Create a chasing effect
-        for (int i = 10; i < strip.numPixels(); i++) {
-            strip.setPixelColor(i, strip.Color(255, 0, 0));        // Turn on the current light (red)
-            strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
-            strip.show();
-            delay(wait); // Adjust speed of the chase effect
-        }
+//         // Step 2: Create a chasing effect
+//         for (int i = 10; i < strip.numPixels(); i++) {
+//             strip.setPixelColor(i, strip.Color(255, 0, 0));        // Turn on the current light (red)
+//             strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
+//             strip.show();
+//             delay(wait); // Adjust speed of the chase effect
+//         }
 
-        // Step 3: Turn off all lights
-        for (int i = 0; i < strip.numPixels(); i++) {
-            strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
-            strip.show();
-            delay(wait);
-        }
-    } else {
-        Serial.println("No motion detected. Lights off.");
-        strip.clear();
-        strip.show(); // Ensure all lights are off
-    }
-}
+//         // Step 3: Turn off all lights
+//         for (int i = 0; i < strip.numPixels(); i++) {
+//             strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
+//             strip.show();
+//             delay(wait);
+//         }
+//     } else {
+//         Serial.println("No motion detected. Lights off.");
+//         strip.clear();
+//         strip.show(); // Ensure all lights are off
+//     }
+// }
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
