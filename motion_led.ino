@@ -102,7 +102,8 @@ void CheckForMotion() {
         // christmasLights(200);
 
         // Execute the New Years lights sequence once after 200ms
-        newYearsLights(400);
+        // newYearsLights(400);
+        inchwormEffect(40);
         
 
         // Wait to avoid immediate retriggering
@@ -116,21 +117,36 @@ void inchwormEffect(uint8_t wait) {
         Serial.println("Motion detected!");
 
         const int separation = 10; // Number of LEDs within the "off" zone
-        const int spacing = 30;    // Distance between the start of each chasing effect
+        const int totalLEDs = 310; // Total number of LEDs
+        const int numEffects = 5;  // Number of simultaneous chasing effects
+        const int spacing = totalLEDs / numEffects; // Calculate spacing between effects
 
-        // Reverse chasing effect with evenly spaced patterns
-        for (int i = 0; i < strip.numPixels() + spacing; i++) {
-            // Turn off lights within the separation range
-            for (int j = 0; j < strip.numPixels(); j++) {
-                if ((j >= i && j < i + separation) || (j >= i - strip.numPixels() && j < i - strip.numPixels() + separation)) {
-                    strip.setPixelColor(j, strip.Color(0, 0, 0)); // Turn off lights
-                } else {
-                    strip.setPixelColor(j, LIGHT_BLUE); // Keep lights on outside the separation
+        while (true) { // Run continuously
+            for (int i = 0; i < totalLEDs + separation; i++) {
+                // Update LED states for each effect
+                for (int j = 0; j < strip.numPixels(); j++) {
+                    bool isOff = false;
+
+                    // Check if the LED falls within any chasing effect's separation range
+                    for (int k = 0; k < numEffects; k++) {
+                        int effectStart = (i + k * spacing) % totalLEDs;
+                        if (j >= effectStart && j < effectStart + separation) {
+                            isOff = true;
+                            break;
+                        }
+                    }
+
+                    // Set LED color based on its state
+                    if (isOff) {
+                        strip.setPixelColor(j, strip.Color(0, 0, 0)); // Turn off LED
+                    } else {
+                        strip.setPixelColor(j, LIGHT_BLUE); // Keep LED on
+                    }
                 }
+
+                strip.show();
+                delay(wait); // Delay to control the speed of the effect
             }
-            
-            strip.show();
-            delay(wait); // Delay to control the speed of the effect
         }
     }
 }
