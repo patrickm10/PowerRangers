@@ -118,19 +118,35 @@ void newYearsLights(uint8_t wait) {
     if (digitalRead(MOTION_SENSOR_PIN) == HIGH) {
         Serial.println("Motion detected!");
 
-        // Step 1: Turn on the first ten lights with light blue color
-        for (int i = 0; i < 10; i++) {
+        // Step 1: Turn on the first 50 lights with light blue color
+        for (int i = 0; i < 50; i++) {
             strip.setPixelColor(i, LIGHT_BLUE); // Light Blue
         }
         strip.show();
-        delay(3000); // Hold the lights on for 3 seconds
+        delay(1000); // Hold the lights on for 1 second
 
-        // Step 2: Create a chasing effect
-        for (int i = 10; i < strip.numPixels(); i++) {
-            strip.setPixelColor(i, LIGHT_BLUE);        // Turn on the current light (light blue)
-            strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
+        // Step 2: Start the chasing effect
+        for (int i = 50; i < strip.numPixels(); i += 5) {
+            // Turn on the next five lights
+            for (int j = i; j < i + 5 && j < strip.numPixels(); j++) {
+                strip.setPixelColor(j, LIGHT_BLUE); // Light Blue
+            }
             strip.show();
-            delay(wait); // Adjust speed of the chase effect
+            delay(1000); // Hold the lights on for 1 second
+
+            // Turn off the first three of the five lights
+            for (int j = i; j < i + 3 && j < strip.numPixels(); j++) {
+                strip.setPixelColor(j, strip.Color(0, 0, 0)); // Turn off each light
+            }
+            strip.show();
+            delay(1000); // Hold the lights off for 1 second
+
+            // Turn on the remaining two lights
+            for (int j = i + 3; j < i + 5 && j < strip.numPixels(); j++) {
+                strip.setPixelColor(j, LIGHT_BLUE); // Light Blue
+            }
+            strip.show();
+            delay(1000); // Hold the lights on for 1 second
         }
 
         // Step 3: Turn off all lights
