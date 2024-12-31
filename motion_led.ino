@@ -110,38 +110,38 @@ void CheckForMotion() {
     }
 }
 
+
 void inchwormEffect(uint8_t wait) {
     if (digitalRead(MOTION_SENSOR_PIN) == HIGH) {
         Serial.println("Motion detected!");
-        for (int iteration = 0; iteration < 20; iteration++) {
-            // Turn on all lights
-            for (int i = 0; i < strip.numPixels(); i++) {
-                strip.setPixelColor(i, LIGHT_BLUE); // Set all lights to light blue
-            }
-            strip.show();
-            delay(wait);
 
-            // Turn off 3 lights at a time, moving up the strip
-            for (int i = 0; i < strip.numPixels(); i += 3) {
-                for (int j = 0; j < 3; j++) {
+        // Number of lights to separate the "on" lights for each effect
+        const int separation = 23;
+        const int effectSpacing = separation + 10; // Distance between the start of each effect
+
+        unsigned long startTime = millis(); // Record the start time
+        while (millis() - startTime < 20000) { // Run for 20 seconds
+            // Loop through the strip with the specified separation
+            for (int i = 0; i < strip.numPixels(); i++) {
+                // Turn all lights on initially
+                for (int j = 0; j < strip.numPixels(); j++) {
+                    strip.setPixelColor(j, LIGHT_BLUE); // Turn all lights to light blue
+                }
+
+                // Create raindrop effect
+                for (int j = 0; j < strip.numPixels(); j += effectSpacing) {
                     if (i + j < strip.numPixels()) {
                         strip.setPixelColor(i + j, strip.Color(0, 0, 0)); // Turn off light
                     }
                 }
+                
                 strip.show();
-                delay(40);
-
-                // Turn the lights back on after the chasing effect has passed
-                for (int j = 0; j < 3; j++) {
-                    if (i + j < strip.numPixels()) {
-                        strip.setPixelColor(i + j, LIGHT_BLUE); // Turn light back on
-                    }
-                }
-                strip.show();
+                delay(wait); // Delay to control the speed of the effect
             }
         }
     }
 }
+
 // New Years themed lights
 // Fill the dots one after the other with a color starting from the bottom
 void newYearsLights(uint8_t wait) {
