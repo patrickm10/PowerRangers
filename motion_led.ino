@@ -115,25 +115,22 @@ void inchwormEffect(uint8_t wait) {
     if (digitalRead(MOTION_SENSOR_PIN) == HIGH) {
         Serial.println("Motion detected!");
 
-        const int separation = 20; // Number of LEDs within the "off" zone
+        const int separation = 10; // Number of LEDs within the "off" zone
         const int spacing = 30;    // Distance between the start of each chasing effect
 
-        unsigned long startTime = millis(); // Record the start time
-        while (millis() - startTime < 20000) { // Run for 20 seconds
-            // Reverse chasing effect with evenly spaced patterns
-            for (int i = 0; i < strip.numPixels() + spacing; i++) {
-                // Turn off lights within the separation range
-                for (int j = 0; j < strip.numPixels(); j++) {
-                    if ((j >= i && j < i + separation) || (j >= i - strip.numPixels() && j < i - strip.numPixels() + separation)) {
-                        strip.setPixelColor(j, strip.Color(0, 0, 0)); // Turn off lights
-                    } else {
-                        strip.setPixelColor(j, LIGHT_BLUE); // Keep lights on outside the separation
-                    }
+        // Reverse chasing effect with evenly spaced patterns
+        for (int i = 0; i < strip.numPixels() + spacing; i++) {
+            // Turn off lights within the separation range
+            for (int j = 0; j < strip.numPixels(); j++) {
+                if ((j >= i && j < i + separation) || (j >= i - strip.numPixels() && j < i - strip.numPixels() + separation)) {
+                    strip.setPixelColor(j, strip.Color(0, 0, 0)); // Turn off lights
+                } else {
+                    strip.setPixelColor(j, LIGHT_BLUE); // Keep lights on outside the separation
                 }
-                
-                strip.show();
-                delay(wait); // Delay to control the speed of the effect
             }
+            
+            strip.show();
+            delay(wait); // Delay to control the speed of the effect
         }
     }
 }
