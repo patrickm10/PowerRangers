@@ -103,13 +103,49 @@ void CheckForMotion() {
 
         // Execute the New Years lights sequence once after 200ms
         // newYearsLights(400);
-        inchwormEffect(40);
+        lightBlueChase(40);
         
 
         // Wait to avoid immediate retriggering
         delay(10000);  // Adjust delay as needed (e.g., 10 seconds)
     }
 }
+
+// Light blue chasing lights
+// Fill the dots one after the other with a color starting from the bottom
+void lightBlueChase(uint8_t wait) {
+    // Check if motion is detected
+    if (digitalRead(PIR_PIN) == HIGH) {
+        Serial.println("Motion detected!");
+
+        // Step 1: Turn on the first ten lights with light blue color
+        for (int i = 0; i < 20; i++) {
+            strip.setPixelColor(i, strip.Color(0, 191, 255)); // Light blue
+        }
+        strip.show();
+        delay(2000); // Hold the lights on for 2 seconds
+
+        // Step 2: Create a chasing effect
+        for (int i = 20; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, strip.Color(0, 191, 255));        // Turn on the current light (light blue)
+            strip.setPixelColor(i - 20, strip.Color(0, 0, 0));     // Turn off the oldest light
+            strip.show();
+            delay(wait); // Adjust speed of the chase effect
+        }
+
+        // Step 3: Turn off all lights
+        for (int i = 0; i < strip.numPixels(); i++) {
+            strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
+            strip.show();
+            delay(wait);
+        }
+    } else {
+        Serial.println("No motion detected. Lights off.");
+        strip.clear();
+        strip.show(); // Ensure all lights are off
+    }
+}
+
 
 
 void inchwormEffect(uint8_t wait) {
@@ -259,44 +295,6 @@ void rainbowCycle(uint8_t wait) {
             }
 }
 
-// Christmas themed lights
-// Fill the dots one after the other with a color starting from the bottom
-// void christmasLights(uint8_t wait) {
-//     // Check if motion is detected
-//     if (digitalRead(PIR_PIN) == HIGH) {
-//         Serial.println("Motion detected!");
-
-//         // Step 1: Turn on the first ten lights, alternating red and green
-//         for (int i = 0; i < 10; i++) {
-//             if (i % 2 == 0) {
-//                 strip.setPixelColor(i, strip.Color(255, 0, 0)); // Red
-//             } else {
-//                 strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green
-//             }
-//         }
-//         strip.show();
-//         delay(2000); // Hold the lights on for 2 seconds
-
-//         // Step 2: Create a chasing effect
-//         for (int i = 10; i < strip.numPixels(); i++) {
-//             strip.setPixelColor(i, strip.Color(255, 0, 0));        // Turn on the current light (red)
-//             strip.setPixelColor(i - 10, strip.Color(0, 0, 0));     // Turn off the oldest light
-//             strip.show();
-//             delay(wait); // Adjust speed of the chase effect
-//         }
-
-//         // Step 3: Turn off all lights
-//         for (int i = 0; i < strip.numPixels(); i++) {
-//             strip.setPixelColor(i, strip.Color(0, 0, 0)); // Turn off each light
-//             strip.show();
-//             delay(wait);
-//         }
-//     } else {
-//         Serial.println("No motion detected. Lights off.");
-//         strip.clear();
-//         strip.show(); // Ensure all lights are off
-//     }
-// }
 
 //Theatre-style crawling lights with rainbow effect
 void theaterChaseRainbow(uint8_t wait) {
